@@ -60,13 +60,13 @@ function decodeModuleName(input: serializedMorphir_IR_Module_ModuleName): Morphi
 
 function decodePackageDefinition<ta,va>(input: serializedMorphir_IR_Package_Definition<ta,va>): Morphir.IR.Package.Definition<ta,va> {
     // This type has a custom Elm codec/decodec.
-    function decodeArrayElement(item) {
+    function decodeArrayElement(item): [Morphir.IR.Module.ModuleName, Morphir.IR.AccessControlled.AccessControlled<Morphir.IR.Module.Definition<ta,va>>] {
         return [
-            decodeModuleName(input['name']),
+            decodeModuleName(item['name']),
             decodeAccessControlled<serializedMorphir_IR_Module_Definition<ta,va>,Morphir.IR.Module.Definition<ta,va>>(
-                input['def'],
+                item['def'],
                 (item: serializedMorphir_IR_Module_Definition<ta,va>): Morphir.IR.Module.Definition<ta,va> => {
-                    return item.name, item.def
+                    return { Types: [], Values: [] }; //item // can't yet decode Module.Definition
                 }
             ),
         ]
