@@ -14,6 +14,13 @@ Object.defineProperty(DecodeError.prototype, 'name', {
 
 type serializedCustomType = [string, ...any[]];
 
+function expectString(input: any): string {
+    if (typeof(input) != "string") {
+        throw new DecodeError(`Expected string, got ${typeof(input)}`);
+    }
+    return input;
+}
+
 function expectArray(input: any): Array<any> {
     if (!(input instanceof Array)) {
         throw new DecodeError(`Expected Array, got ${typeof(input)}`);
@@ -21,21 +28,33 @@ function expectArray(input: any): Array<any> {
     return input;
 }
 
-function expectName(input: any): Morphir.IR.Name.Name {
-    const inputArray = expectArray(input);
-    inputArray.map((item: any) => {
-        if (typeof(item) != "string") {
-            throw new DecodeError(`Expected string, got ${typeof(input)}`);
+function expectObject(input: any, fieldNames: Array<string>): object {
+    if (!(input instanceof Object)) {
+        throw new DecodeError(`Expected Object, got ${typeof(input)}`);
+    }
+    for (var field in fieldNames) {
+        if (!(field in Object.keys(input))) {
+            throw new DecodeError(`Expected field ${field} was not found`);
         }
-    });
-    return inputArray;
+    }
+    if (Object.keys(input).length > fieldNames.length) {
+        throw new DecodeError(`Input object has extra fields, expected ${fieldNames.length}, got ${input.keys().length}`);
+    }
+
+    return input;
 }
 
+function expectName(input: any): Morphir.IR.Name.Name {
+    const inputArray = expectArray(input);
+    return inputArray.map(expectString);
+}
 
 function expectPath(input: any): Morphir.IR.Path.Path {
     const inputArray = expectArray(input);
     return inputArray.map(expectName);
 }
+
+const expectModuleName = expectPath;
 
 function expectCustomType(input: any): serializedCustomType {
     if (!(input instanceof Array)) {
@@ -49,6 +68,51 @@ function expectCustomType(input: any): serializedCustomType {
     return input as serializedCustomType;
 }
 
+function expectAccess(input: any): Morphir.IR.AccessControlled.Access {
+    const inputString = expectString(input);
+    if (inputString == 'public') {
+        return { kind: "Public" };
+    } else if (inputString == 'private') {
+        return { kind: "Private" };
+    } else {
+        throw new DecodeError("Invalid Access type: " + input);
+    }
+}
+function expectAccessControlled<T>(input: any,
+                                   decodeValue: (any) => T): Morphir.IR.AccessControlled.AccessControlled<T> {
+    // This type has a custom Elm codec/decodec.
+    const inputArray = expectArray(input);
+    if (inputArray.length != 2) {
+        throw new DecodeError(`Expected array with length 2, got ${inputArray.length}`);
+    }
+    return {
+        Access: expectAccess(inputArray[0]),
+        Value: decodeValue(inputArray[1]),
+    }
+}
+function expectPackageDefinition<ta,va>(input: any): Morphir.IR.Package.Definition<ta,va> {
+    // This type has a custom Elm codec/decodec.
+    const inputObject = expectObject(input, ["modules"]);
+    const inputModulesArray = expectArray(input["modules"]);
+
+    function decodeArrayElement(item):[Morphir.IR.Module.ModuleName, Morphir.IR.AccessControlled.AccessControlled<Morphir.IR.Module.Definition<ta,va>>] {
+        const itemObject = expectObject(item, ["name", "def"]);
+        return [
+            expectModuleName(itemObject["name"]),
+            expectAccessControlled(
+                itemObject["def"],
+                (item): Morphir.IR.Module.Definition<ta,va> => {
+                    return { Types: [], Values: [] }; //item // can't yet decode Module.Definition
+                }
+            ),
+        ]
+    };
+
+    return {
+        Modules: inputModulesArray.map(decodeArrayElement),
+    }
+}
+
 function expectDistribution(input: any): Morphir.IR.Distribution.Distribution {
     const serialized = expectCustomType(input);
     if (serialized[0] == "library") {
@@ -60,7 +124,7 @@ function expectDistribution(input: any): Morphir.IR.Distribution.Distribution {
             kind: "Library",
             arg1: expectPath(input[1]),
             arg2: input[2],
-            arg3: input[3],//expectPackageDefinition<[],Morphir.IR.Type.Type<[]>>(input[3]),
+            arg3: expectPackageDefinition<[],Morphir.IR.Type.Type<[]>>(input[3]),
         }
     } else {
         throw new DecodeError(`Expected type "library", got ${serialized[0]}`);
@@ -85,7 +149,7 @@ function formatPath(parts: Morphir.IR.Path.Path) {
 }
 
 function formatPackageDefinition(packageDefinition: Morphir.IR.Package.Definition<[], Morphir.IR.Type.Type<[]>>): string {
-    return "FIXME"; //JSON.stringify(packageDefinition.Modules);
+    return JSON.stringify(packageDefinition.Modules);
 }
 
 function formatDistribution(distribution: Morphir.IR.Distribution.Distribution): string {
