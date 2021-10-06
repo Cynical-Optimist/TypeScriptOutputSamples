@@ -18,8 +18,8 @@ export namespace Morphir_IR_Module {
   
   */
   export type Definition<ta, va> = {
-    Types: Array<[Morphir_IR_Name.Name, Morphir_IR_AccessControlled.AccessControlled<Morphir_IR_Documented.Documented<Morphir_IR_Type.Definition<ta>>>]>;
-    Values: Array<[Morphir_IR_Name.Name, Morphir_IR_AccessControlled.AccessControlled<Morphir_IR_Value.Definition<ta, va>>]>;
+    types: Array<[Morphir_IR_Name.Name, Morphir_IR_AccessControlled.AccessControlled<Morphir_IR_Documented.Documented<Morphir_IR_Type.Definition<ta>>>]>;
+    values: Array<[Morphir_IR_Name.Name, Morphir_IR_AccessControlled.AccessControlled<Morphir_IR_Value.Definition<ta, va>>]>;
   }
   
   /* A module name is a unique identifier for a module within a package. It is represented by a path, which is a list of
@@ -37,8 +37,8 @@ export namespace Morphir_IR_Module {
   
   */
   export type Specification<ta> = {
-    Types: Array<[Morphir_IR_Name.Name, Morphir_IR_Documented.Documented<Morphir_IR_Type.Specification<ta>>]>;
-    Values: Array<[Morphir_IR_Name.Name, Morphir_IR_Value.Specification<ta>]>;
+    types: Array<[Morphir_IR_Name.Name, Morphir_IR_Documented.Documented<Morphir_IR_Type.Specification<ta>>]>;
+    values: Array<[Morphir_IR_Name.Name, Morphir_IR_Value.Specification<ta>]>;
   }
   
 }

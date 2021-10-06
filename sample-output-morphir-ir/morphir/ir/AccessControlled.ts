@@ -18,8 +18,8 @@ export namespace Morphir_IR_AccessControlled {
   /* Type that represents different access levels.
   */
   export type AccessControlled<a> = {
-    Access: Morphir_IR_AccessControlled.Access;
-    Value: a;
+    access: Morphir_IR_AccessControlled.Access;
+    value: a;
   }
   
 }

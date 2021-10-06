@@ -5,7 +5,7 @@
 export namespace Morphir_Reference_Model_Issues_Issue401 {
   
   export type Foo = {
-    Field: string;
+    field: string;
   }
   
 }

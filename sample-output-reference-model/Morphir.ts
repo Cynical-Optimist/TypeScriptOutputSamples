@@ -40,12 +40,6 @@ export namespace Morphir {
       
       export import Formulas = Morphir_Reference_Model_Formulas
       
-      export import Types = Morphir_Reference_Model_Types
-      
-      export import ValueEditors = Morphir_Reference_Model_ValueEditors
-      
-      export import Values = Morphir_Reference_Model_Values
-      
       export namespace Insight {
         export import UseCase1 = Morphir_Reference_Model_Insight_UseCase1
         
@@ -114,6 +108,12 @@ export namespace Morphir {
         export import Tuple = Morphir_Reference_Model_SDK_Tuple
         
       }
+      
+      export import Types = Morphir_Reference_Model_Types
+      
+      export import ValueEditors = Morphir_Reference_Model_ValueEditors
+      
+      export import Values = Morphir_Reference_Model_Values
       
     }
     

@@ -5,7 +5,7 @@
 export namespace Morphir_Reference_Model_Issues_Issue349 {
   
   export type Result<a> = {
-    Foo: Array<a>;
+    foo: Array<a>;
   }
   
 }

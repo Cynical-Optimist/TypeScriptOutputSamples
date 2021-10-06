@@ -5,7 +5,7 @@
 export namespace Morphir_Reference_Model_Issues_Issue273 {
   
   type MyRecord = {
-    Foo: string;
+    foo: string;
   }
   
 }

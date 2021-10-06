@@ -35,8 +35,8 @@ export namespace Morphir_IR_Type {
   /* An opaque representation of a field. It's made up of a name and a type.
   */
   export type Field<a> = {
-    Name: Morphir_IR_Name.Name;
-    Tpe: Morphir_IR_Type.Type<a>;
+    name: Morphir_IR_Name.Name;
+    tpe: Morphir_IR_Type.Type<a>;
   }
   
   /* */

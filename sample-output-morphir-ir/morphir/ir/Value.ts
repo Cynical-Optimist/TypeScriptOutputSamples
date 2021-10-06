@@ -10,9 +10,9 @@ export namespace Morphir_IR_Value {
   which is just the specification of those. Value definitions can be typed or untyped. Exposed values have to be typed.
   */
   export type Definition<ta, va> = {
-    InputTypes: Array<[Morphir_IR_Name.Name, va, Morphir_IR_Type.Type<ta>]>;
-    OutputType: Morphir_IR_Type.Type<ta>;
-    Body: Morphir_IR_Value.Value<ta, va>;
+    inputTypes: Array<[Morphir_IR_Name.Name, va, Morphir_IR_Type.Type<ta>]>;
+    outputType: Morphir_IR_Type.Type<ta>;
+    body: Morphir_IR_Value.Value<ta, va>;
   }
   
   /* Type that represents a pattern. A pattern can do two things: match on a specific shape or exact value and extract
@@ -99,8 +99,8 @@ export namespace Morphir_IR_Value {
   is without the actual data or logic behind it.
   */
   export type Specification<ta> = {
-    Inputs: Array<[Morphir_IR_Name.Name, Morphir_IR_Type.Type<ta>]>;
-    Output: Morphir_IR_Type.Type<ta>;
+    inputs: Array<[Morphir_IR_Name.Name, Morphir_IR_Type.Type<ta>]>;
+    output: Morphir_IR_Type.Type<ta>;
   }
   
   /* A value with type information.

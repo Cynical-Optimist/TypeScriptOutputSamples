@@ -33,9 +33,9 @@ export namespace Morphir_Reference_Model_Types {
   
   
   export type FooBarBazRecord = {
-    Foo: string;
-    Bar: boolean;
-    Baz: number;
+    foo: string;
+    bar: boolean;
+    baz: number;
   }
   
   export interface FullName {
