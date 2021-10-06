@@ -5,9 +5,9 @@
 export namespace Morphir_Reference_Model_BooksAndRecords {
   
   export type Deal = {
-    Product: Morphir_Reference_Model_BooksAndRecords.ProductID;
-    Price: Morphir_Reference_Model_BooksAndRecords.Price;
-    Quantity: Morphir_Reference_Model_BooksAndRecords.Quantity;
+    product: Morphir_Reference_Model_BooksAndRecords.ProductID;
+    price: Morphir_Reference_Model_BooksAndRecords.Price;
+    quantity: Morphir_Reference_Model_BooksAndRecords.Quantity;
   }
   
   
@@ -65,15 +65,15 @@ export namespace Morphir_Reference_Model_BooksAndRecords {
   
   
   export type Inventory = {
-    Supplier: Morphir_Reference_Model_BooksAndRecords.SupplierID;
-    Product: Morphir_Reference_Model_BooksAndRecords.ProductID;
-    Quantity: Morphir_Reference_Model_BooksAndRecords.Quantity;
+    supplier: Morphir_Reference_Model_BooksAndRecords.SupplierID;
+    product: Morphir_Reference_Model_BooksAndRecords.ProductID;
+    quantity: Morphir_Reference_Model_BooksAndRecords.Quantity;
   }
   
   
   export type Position = {
-    Product: Morphir_Reference_Model_BooksAndRecords.ProductID;
-    Quantity: Morphir_Reference_Model_BooksAndRecords.Quantity;
+    product: Morphir_Reference_Model_BooksAndRecords.ProductID;
+    quantity: Morphir_Reference_Model_BooksAndRecords.Quantity;
   }
   
   

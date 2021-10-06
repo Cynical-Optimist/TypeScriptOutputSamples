@@ -15,8 +15,6 @@ import { Morphir_IR_Value } from "./morphir/ir/Value"
 import { Morphir_ListOfResults } from "./morphir/ListOfResults"
 
 export namespace Morphir {
-  import ListOfResults = Morphir_ListOfResults
-  
   export namespace IR {
     export import AccessControlled = Morphir_IR_AccessControlled
     
@@ -43,6 +41,8 @@ export namespace Morphir {
     export import Value = Morphir_IR_Value
     
   }
+  
+  import ListOfResults = Morphir_ListOfResults
   
 }
 

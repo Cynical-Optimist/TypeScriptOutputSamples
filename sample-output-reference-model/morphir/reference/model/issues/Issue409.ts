@@ -6,9 +6,9 @@ import { Morphir_Reference_Model_Issues_PatternModel_OtherBasicEnum } from "./..
 export namespace Morphir_Reference_Model_Issues_Issue409 {
   
   export type BasicRule = {
-    BasicEnum: Morphir_Reference_Model_Issues_PatternModel_BasicEnum.BasicEnum;
-    OtherBasicEnum: Morphir_Reference_Model_Issues_PatternModel_OtherBasicEnum.OtherBasicEnum;
-    Id: string;
+    basicEnum: Morphir_Reference_Model_Issues_PatternModel_BasicEnum.BasicEnum;
+    otherBasicEnum: Morphir_Reference_Model_Issues_PatternModel_OtherBasicEnum.OtherBasicEnum;
+    id: string;
   }
   
 }

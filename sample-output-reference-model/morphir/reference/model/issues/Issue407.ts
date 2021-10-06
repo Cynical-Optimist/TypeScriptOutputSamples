@@ -5,29 +5,29 @@
 export namespace Morphir_Reference_Model_Issues_Issue407 {
   
   export type BigRecord = {
-    Field1: number;
-    Field2: number;
-    Field3: number;
-    Field4: number;
-    Field5: number;
-    Field6: number;
-    Field7: number;
-    Field8: number;
-    Field9: number;
-    Field10: number;
-    Field11: number;
-    Field12: number;
-    Field13: number;
-    Field14: number;
-    Field15: number;
-    Field16: number;
-    Field17: number;
-    Field18: number;
-    Field19: number;
-    Field20: number;
-    Field21: number;
-    Field22: number;
-    Field23: number;
+    field1: number;
+    field2: number;
+    field3: number;
+    field4: number;
+    field5: number;
+    field6: number;
+    field7: number;
+    field8: number;
+    field9: number;
+    field10: number;
+    field11: number;
+    field12: number;
+    field13: number;
+    field14: number;
+    field15: number;
+    field16: number;
+    field17: number;
+    field18: number;
+    field19: number;
+    field20: number;
+    field21: number;
+    field22: number;
+    field23: number;
   }
   
 }

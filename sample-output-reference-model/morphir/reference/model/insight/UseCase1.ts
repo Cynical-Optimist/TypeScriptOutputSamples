@@ -16,9 +16,9 @@ export namespace Morphir_Reference_Model_Insight_UseCase1 {
   
   
   export type TrackingAdvantage = {
-    Direction: Morphir_Reference_Model_Insight_UseCase1.Direction;
-    Code: string;
-    Velocity: number;
+    direction: Morphir_Reference_Model_Insight_UseCase1.Direction;
+    code: string;
+    velocity: number;
   }
   
 }

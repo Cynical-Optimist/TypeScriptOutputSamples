@@ -11,7 +11,7 @@ export namespace Morphir_IR_Package {
   modules.
   */
   export type Definition<ta, va> = {
-    Modules: Array<[Morphir_IR_Module.ModuleName, Morphir_IR_AccessControlled.AccessControlled<Morphir_IR_Module.Definition<ta, va>>]>;
+    modules: Array<[Morphir_IR_Module.ModuleName, Morphir_IR_AccessControlled.AccessControlled<Morphir_IR_Module.Definition<ta, va>>]>;
   }
   
   /* A package name is a globally unique identifier for a package. It is represented by a path, which is a list of names.
@@ -22,7 +22,7 @@ export namespace Morphir_IR_Package {
   and type signatures for values that are exposed publicly.
   */
   export type Specification<ta> = {
-    Modules: Array<[Morphir_IR_Module.ModuleName, Morphir_IR_Module.Specification<ta>]>;
+    modules: Array<[Morphir_IR_Module.ModuleName, Morphir_IR_Module.Specification<ta>]>;
   }
   
 }

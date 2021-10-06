@@ -5,8 +5,8 @@
 export namespace Morphir_Reference_Model_Values {
   
   export type FruitAction = {
-    FruitType: string;
-    Amount: number;
+    fruitType: string;
+    amount: number;
   }
   
 }

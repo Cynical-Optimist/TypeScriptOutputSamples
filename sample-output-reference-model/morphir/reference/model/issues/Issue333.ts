@@ -77,16 +77,16 @@ export namespace Morphir_Reference_Model_Issues_Issue333 {
   
   
   export type RawLocalDate = {
-    Year: number;
-    Month: number;
-    Day: number;
+    year: number;
+    month: number;
+    day: number;
   }
   
   
   export type ValidLocalDate = {
-    Year: number;
-    Month: Morphir_Reference_Model_Issues_Issue333.Month;
-    Day: number;
+    year: number;
+    month: Morphir_Reference_Model_Issues_Issue333.Month;
+    day: number;
   }
   
 }

@@ -5,9 +5,9 @@
 export namespace Morphir_Reference_Model_Issues_Issue364 {
   
   export type Input = {
-    Key1: string;
-    Key2: string;
-    Value: number;
+    key1: string;
+    key2: string;
+    value: number;
   }
   
 }
