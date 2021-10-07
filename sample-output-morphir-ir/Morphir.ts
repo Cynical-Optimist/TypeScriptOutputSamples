@@ -22,11 +22,11 @@ export namespace Morphir {
     
     export import Distribution = Morphir_IR_Distribution
     
-    import Documented = Morphir_IR_Documented
+export    import Documented = Morphir_IR_Documented
     
     export import FQName = Morphir_IR_FQName
     
-    import Literal = Morphir_IR_Literal
+export    import Literal = Morphir_IR_Literal
     
     export import Module = Morphir_IR_Module
     

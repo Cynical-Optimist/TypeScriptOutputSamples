@@ -78,6 +78,7 @@ function expectAccess(input: any): Morphir.IR.AccessControlled.Access {
         throw new DecodeError("Invalid Access type: " + input);
     }
 }
+
 function expectAccessControlled<T>(input: any,
                                    decodeValue: (any) => T): Morphir.IR.AccessControlled.AccessControlled<T> {
     // This type has a custom Elm codec/decodec.
