@@ -66,7 +66,6 @@ function expectFloat(input) {
 }
 function expectArray(input) {
     if (!(input instanceof Array)) {
-        console.log(input);
         throw new DecodeError("Expected Array, got " + typeof (input));
     }
     return input;
@@ -186,24 +185,24 @@ function expectLiteral(input) {
     }
 }
 var expectModuleName = expectPath;
-function expectModuleSpecification(input) {
+function expectModuleSpecification(decodeTypeAttribute, input) {
     var inputObject = expectObject(input, ["types", "values"]);
     var inputTypesArray = expectArray(input['types']);
     var inputValuesArray = expectArray(input['values']);
-    var typesMap = expectMap(expectName, expectDocumented.bind(null, expectTypeSpecification), inputTypesArray);
-    var valuesMap = expectMap(expectName, expectValueSpecification.bind(null, expectTypeSpecification, expectValueSpecification), inputValuesArray);
+    var typesMap = expectMap(expectName, expectDocumented.bind(null, expectTypeSpecification.bind(decodeTypeAttribute)), inputTypesArray);
+    var valuesMap = expectMap(expectName, expectValueSpecification.bind(null, decodeTypeAttribute), inputValuesArray);
     return {
         Types: typesMap,
         Values: valuesMap
     };
 }
-function expectModuleDefinition(input) {
+function expectModuleDefinition(decodeTypeAttribute, decodeValueAttribute, input) {
     var inputObject = expectObject(input, ["types", "values"]);
     var inputTypesArray = expectArray(input['types']);
     var inputValuesArray = expectArray(input['values']);
     return {
-        Types: expectMap(expectName, expectAccessControlled.bind(null, expectDocumented.bind(null, expectTypeDefinition)), inputTypesArray),
-        Values: expectMap(expectName, expectAccessControlled.bind(null, expectValueDefinition), inputValuesArray)
+        Types: expectMap(expectName, expectAccessControlled.bind(null, expectDocumented.bind(null, expectTypeDefinition.bind(null, decodeTypeAttribute))), inputTypesArray),
+        Values: expectMap(expectName, expectAccessControlled.bind(null, expectValueDefinition.bind(null, decodeTypeAttribute, decodeValueAttribute)), inputValuesArray)
     };
 }
 function expectName(input) {
@@ -215,7 +214,7 @@ function expectPath(input) {
     return inputArray.map(expectName);
 }
 var expectPackageName = expectPath;
-function expectPackageSpecification(input) {
+function expectPackageSpecification(decodeTypeAttribute, input) {
     // This type has a custom Elm codec/decodec.
     var inputObject = expectObject(input, ["modules"]);
     var inputModulesCustom = expectArray(input['modules']);
@@ -224,10 +223,10 @@ function expectPackageSpecification(input) {
         return [item['name'], item['def']];
     });
     return {
-        Modules: expectMap(expectModuleName, expectModuleSpecification, inputModulesDict)
+        Modules: expectMap(expectModuleName, expectModuleSpecification.bind(null, decodeTypeAttribute), inputModulesDict)
     };
 }
-function expectPackageDefinition(decodeTypeAttibute, decodeValueAttribute, input) {
+function expectPackageDefinition(decodeTypeAttribute, decodeValueAttribute, input) {
     // This type has a custom Elm codec/decodec.
     var inputObject = expectObject(input, ["modules"]);
     var inputModulesCustom = expectArray(input["modules"]);
@@ -236,7 +235,7 @@ function expectPackageDefinition(decodeTypeAttibute, decodeValueAttribute, input
         return [item['name'], item['def']];
     });
     return {
-        Modules: expectMap(expectModuleName, expectAccessControlled.bind(null, expectModuleDefinition), inputModulesDict)
+        Modules: expectMap(expectModuleName, expectAccessControlled.bind(null, expectModuleDefinition.bind(null, decodeTypeAttribute, decodeValueAttribute)), inputModulesDict)
     };
 }
 function expectQName(input) {
@@ -329,31 +328,17 @@ function morphirIrFromJson(data) {
     }
     return expectDistribution(data['distribution']);
 }
-function formatNameUnderscores(parts) {
-    return parts.join("_");
-}
-function formatPath(parts) {
-    return parts.map(formatNameUnderscores).join(".");
-}
-function formatPackageDefinition(packageDefinition) {
-    return JSON.stringify(packageDefinition.Modules);
-}
-function formatDistribution(distribution) {
-    return [
-        "Distribution name: " + formatPath(distribution.arg1),
-        "Packages: " + distribution.arg2,
-        "Modules:", formatPackageDefinition(distribution.arg3),
-    ].join("\n");
-}
 fs.readFile(INPUT, 'utf8', function (err, data) {
     if (err) {
         console.log("Error reading " + INPUT + ": " + err);
     }
     else {
         var distribution = morphirIrFromJson(JSON.parse(data));
-        // Dump the output 
-        console.log(formatDistribution(distribution));
         // JSON the output
-        console.log(JSON.stringify(distribution));
+        var space = 4;
+        var text = JSON.stringify(distribution, null, space);
+        console.log(text);
+        var reloaded = JSON.parse(text);
+        // FIXME: assert distribution == reloaded ?!
     }
 });

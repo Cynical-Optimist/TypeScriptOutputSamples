@@ -58,7 +58,6 @@ function expectFloat(input: any): number {
 
 function expectArray(input: any): Array<any> {
     if (!(input instanceof Array)) {
-        console.log(input);
         throw new DecodeError(`Expected Array, got ${typeof(input)}`);
     }
     return input;
@@ -197,7 +196,8 @@ function expectLiteral(input: any): Morphir.IR.Literal.Literal {
 
 const expectModuleName = expectPath;
 
-function expectModuleSpecification<ta>(input: any): Morphir.IR.Module.Specification<ta> {
+function expectModuleSpecification<ta>(decodeTypeAttribute: (any) => ta,
+                                       input: any): Morphir.IR.Module.Specification<ta> {
     const inputObject = expectObject(input, ["types", "values"]);
     const inputTypesArray = expectArray(input['types']);
     const inputValuesArray = expectArray(input['values']);
@@ -210,12 +210,13 @@ function expectModuleSpecification<ta>(input: any): Morphir.IR.Module.Specificat
 
     const typesMap = expectMap<TypesMapKey, TypesMapValue>(
         expectName,
-        expectDocumented.bind(null, expectTypeSpecification),
+        expectDocumented.bind(null,
+                              expectTypeSpecification.bind(decodeTypeAttribute)),
         inputTypesArray
     );
     const valuesMap = expectMap<ValuesMapKey, ValuesMapValue>(
         expectName,
-        expectValueSpecification.bind(null, expectTypeSpecification, expectValueSpecification),
+        expectValueSpecification.bind(null, decodeTypeAttribute),
         inputValuesArray
     );
     return {
@@ -224,7 +225,9 @@ function expectModuleSpecification<ta>(input: any): Morphir.IR.Module.Specificat
     }
 }
 
-function expectModuleDefinition<ta,va>(input: any): Morphir.IR.Module.Definition<ta,va> {
+function expectModuleDefinition<ta,va>(decodeTypeAttribute: (any) => ta,
+                                       decodeValueAttribute: (any) => va,
+                                       input: any): Morphir.IR.Module.Definition<ta,va> {
     const inputObject = expectObject(input, ["types", "values"]);
     const inputTypesArray = expectArray(input['types']);
     const inputValuesArray = expectArray(input['values']);
@@ -244,7 +247,7 @@ function expectModuleDefinition<ta,va>(input: any): Morphir.IR.Module.Definition
             expectName,
             expectAccessControlled.bind(null,
                 expectDocumented.bind(null,
-                    expectTypeDefinition
+                    expectTypeDefinition.bind(null, decodeTypeAttribute),
                 )
             ),
             inputTypesArray
@@ -252,7 +255,7 @@ function expectModuleDefinition<ta,va>(input: any): Morphir.IR.Module.Definition
         Values: expectMap<ValuesMapKey, ValuesMapValue>(
             expectName,
             expectAccessControlled.bind(null,
-                expectValueDefinition
+                expectValueDefinition.bind(null, decodeTypeAttribute, decodeValueAttribute),
             ),
             inputValuesArray
         ),
@@ -271,7 +274,8 @@ function expectPath(input: any): Morphir.IR.Path.Path {
 
 const expectPackageName = expectPath;
 
-function expectPackageSpecification<ta>(input: any): Morphir.IR.Package.Specification<ta> {
+function expectPackageSpecification<ta>(decodeTypeAttribute: (any) => ta,
+                                        input: any): Morphir.IR.Package.Specification<ta> {
     // This type has a custom Elm codec/decodec.
     const inputObject = expectObject(input, ["modules"]);
     const inputModulesCustom = expectArray(input['modules']);
@@ -288,13 +292,13 @@ function expectPackageSpecification<ta>(input: any): Morphir.IR.Package.Specific
     return {
         Modules: expectMap<MapKey, MapValue>(
             expectModuleName,
-            expectModuleSpecification,
+            expectModuleSpecification.bind(null, decodeTypeAttribute),
             inputModulesDict
         ),
     }
 }
 
-function expectPackageDefinition<ta,va>(decodeTypeAttibute: (any) => ta,
+function expectPackageDefinition<ta,va>(decodeTypeAttribute: (any) => ta,
                                         decodeValueAttribute: (any) => va,
                                         input: any): Morphir.IR.Package.Definition<ta,va> {
     // This type has a custom Elm codec/decodec.
@@ -314,7 +318,7 @@ function expectPackageDefinition<ta,va>(decodeTypeAttibute: (any) => ta,
         Modules: expectMap<MapKey, MapValue>(
             expectModuleName,
             expectAccessControlled.bind(null,
-                expectModuleDefinition
+                expectModuleDefinition.bind(null, decodeTypeAttribute, decodeValueAttribute),
             ),
             inputModulesDict,
         ),
@@ -436,34 +440,18 @@ function morphirIrFromJson(data: object): Morphir.IR.Distribution.Distribution {
     return expectDistribution(data['distribution']);
 }
 
-function formatNameUnderscores(parts: Morphir.IR.Name.Name) {
-    return parts.join("_");
-}
-
-function formatPath(parts: Morphir.IR.Path.Path) {
-    return parts.map(formatNameUnderscores).join(".");
-}
-
-function formatPackageDefinition(packageDefinition: Morphir.IR.Package.Definition<[], Morphir.IR.Type.Type<[]>>): string {
-    return JSON.stringify(packageDefinition.Modules);
-}
-
-function formatDistribution(distribution: Morphir.IR.Distribution.Distribution): string {
-    return [
-        `Distribution name: ${formatPath(distribution.arg1)}`,
-        `Packages: ${distribution.arg2}`,
-        "Modules:", formatPackageDefinition(distribution.arg3),
-    ].join("\n");
-}
-
 fs.readFile(INPUT, 'utf8', (err, data) => {
     if (err) {
         console.log(`Error reading ${INPUT}: ${err}`);
     } else {
         const distribution = morphirIrFromJson(JSON.parse(data));
-        // Dump the output 
-        console.log(formatDistribution(distribution));
+
         // JSON the output
-        console.log(JSON.stringify(distribution));
+        const space = 4;
+        const text = JSON.stringify(distribution, null, space);
+        console.log(text);
+
+        const reloaded = JSON.parse(text);
+        // FIXME: assert distribution == reloaded ?!
     }
 });
