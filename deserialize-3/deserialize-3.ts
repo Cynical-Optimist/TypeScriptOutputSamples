@@ -135,7 +135,7 @@ function expectDistribution(input: any): Morphir.IR.Distribution.Distribution {
     if (serialized[0] == "library") {
         const argCount = serialized.length - 1;
         if (argCount != 3) {
-            throw new DecodeError(`Expected 3 args for custom type "library", got ${argCount - 1}`);
+            throw new DecodeError(`Expected 3 args for custom type "library", got ${argCount}`);
         }
         return {
             kind: "Library",
