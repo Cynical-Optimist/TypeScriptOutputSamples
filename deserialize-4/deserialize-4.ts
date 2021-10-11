@@ -6,58 +6,6 @@ const fs = require('fs');
 
 const INPUT = './morphir-ir.json';
 
-namespace Schema {
-    type Type = Simple | Array | CustomType_0 | CustomType_1 | CustomType_2 | CustomType_3 | Dict | Record | Tuple;
-
-    type Decoder<T> = (any) => T;
-    type GenericDecoder = Decoder<any>;
-
-    interface Simple<Type> {
-        decode: (any) => Type;
-    }
-
-    interface Array<Element> extends SimpleType<Array> {
-        decode: decodeArray,
-        decodeElement: (any) => Element;
-    }
-
-    interface CustomType_0 extends SimpleType<object> {
-        decode: decodeCustomType_0,
-        argDecoders: Array<GenericDecoder>
-    }
-
-    interface CustomType_1<T1> extends CustomType_0 {
-        decode: decodeCustomType_1,
-        decodeVar1: Decoder<T1>;
-    }
-
-    interface CustomType_2<T1,T2> extends CustomType_1<T1> {
-        decode: decodeCustomType_2,
-        decodeVar2: Decoder<T2>;
-    }
-
-    interface CustomType_3<T1,T2,T3> extends CustomType_2<T1,T2> {
-        decode: decodeCustomType_3,
-        decodeVar3: Decoder<T3>;
-    }
-
-    interface Dict<Key,Value> extends Simple<Array<[Key,Value]>> {
-        decode: decodeDict,
-        decodeKey: Decoder<Key>;
-        decodeValue: Decoder<Value>;
-    }
-
-    interface Record extends Simple<object> {
-        decode: decodeRecord,
-        fieldDecoders: Map<string, GenericDecoder>;
-    }
-
-    interface Tuple extends Simple<Array<any>> {
-        decode: decodeTuple,
-        elementDecoders: [GenericDecoder];
-    }
-}
-
 class DecodeError extends Error {}
 
 Object.defineProperty(DecodeError.prototype, 'name', {
@@ -119,28 +67,25 @@ function decodeArray<T>(decodeElement: (any) => T,
 
 type DecoderList = Array<(any) => any>;
 
-function decodeCustomType_0(argDecoders: DecoderList,
-                            input: any): object {
-    // FIXME: kind!
-}
+function decodeCustomType(kind: string,
+                          argDecoders: DecoderList,
+                          input: any): object {
+    if (input[0].kind != kind) {
+        throw new DecodeError(`Expected kind ${kind}, got ${input[0].kind}`);
+    }
 
-function decodeCustomType_1<T1>(decode1: (any) => T1,
-                                argDecoders: DecoderList,
-                                input: any): object {
-}
+    const argCount = input.length - 1;
+    if (argCount != argDecoders.length) {
+        throw new DecodeError(`Expected ${argDecoders.length} args for custom type "${kind}", got ${argCount}`);
+    }
 
-function decodeCustomType_2<T1,T2>(decode1: (any) => T1,
-                                   decode2: (any) => T2,
-                                   argDecoders: DecoderList,
-                                   input: any): object {
-}
-
-function decodeCustomType_3<T1,T2,T3>(decode1: (any) => T1,
-                                      decode2: (any) => T2,
-                                      decode3: (any) => T3,
-                                      argDecoders: DecoderList,
-                                      input: any): object {
-
+    result = {
+        kind: kind
+    }
+    for (i = 0. i < argDecoders.length; i++) {
+        paramName = `arg${i + 1}`;
+        result[paramName] = argDecoders[i](input[i + 1]);
+    }
 }
 
 // FIXME: dict are represented as arrays right now
@@ -194,13 +139,61 @@ function decodeTuple(elementDecoders: DecoderList, input: any): Array<any> {
     return result;
 }
 
-// Morphir.IR.Distribution.Distribution
-const Morphir_IR_DecoderTree = decodeCustomType_0.bind(
-    null,
+const decode Morphir_IR_Name_Name = decodeArray.bind(null, decodeString);
+const decode_Morphir_IR_Path_Path = decodeArray.bind(null, decode_Morphir_IR_Name_Name);
+const decode_Morphir_IR_Module_ModuleName = decode_Morphir_IR_Path_Path;
+const decode_Morphir_IR_Package_PackageName = decode_Morphir_IR_Path_Path;
+
+function decode_Morphir_IR_Module_Specification<TA>(decode_Var_ta: (any) => TA,
+                                                    input: any): object {
+    return decodeRecord(
+        { 'types':
+            decodeDict.bind(null,
+                decode_Morphir_IR_Name_Name,
+                decode_Morphir_IR_Documented_Documented.bind(null,
+                    decode_Morphir_IR_Type_Specification.bind(null, decode_Var_ta),
+                ),
+            ),
+          'values':
+            decodeDict.bind(null,
+                decode_Morphir_IR_Name_Name,
+                decode_Morphir_IR_Value_Specification.bind(null, decode_Var_ta),
+            )
+        },
+        input
+    );
+}
+
+function decode_Morphir_IR_Package_Specification<TA>(decode_Var_ta: (any) => TA,
+                                                     input: any): object {
+    return decodeRecord(
+        { 'modules':
+            decodeDict.bind(null,
+                decode_Morphir_IR_Module_ModuleName,
+                decode_Morphir_IR_Module_Specification.bind(decode_Var_ta)
+            )
+        }
+    );
+}
+
+const decode_Morphir_IR_Distribution_Distribution = decodeCustomType_0.bind( null,
+    "library",
     [
-        // Morphir.IR.Name.Name
-        decode: decodeArray.bind(null, decodeString),
-        // Morphir....
+        decode_Morphir_IR_Package_PackageName,
+        // Dict<Morphir.IR.Package.PackageName,Morphir.IR.Package.Specification<TypeAttribute>>
+        decodeDict.bind(null,
+            decode_Morphir_IR_Package_PackageName,
+            decode_Morphir_IR_Package_Specification.bind(null, decodeUnit)
+        ),
+        decode_Morphir_IR_Package_Definition.bind(null,
+            [
+                decodeUnit,
+                decodeMorphir_IR_Type_Type.bind(null,
+                    decodeUnit
+                )
+            ]
+        )
+    ]
 }
 
 function morphirIrFromJson(data: object): Morphir.IR.Distribution.Distribution {
