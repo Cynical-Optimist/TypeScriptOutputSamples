@@ -139,61 +139,79 @@ function decodeTuple(elementDecoders: DecoderList, input: any): Array<any> {
     return result;
 }
 
-const decode Morphir_IR_Name_Name = decodeArray.bind(null, decodeString);
-const decode_Morphir_IR_Path_Path = decodeArray.bind(null, decode_Morphir_IR_Name_Name);
+const decoders = {
+    "Morphir.IR.Name.Name": decodeArray.bind(null, decodeString),
+    "Morphir.IR.Path.Path": decodeArray.bind(null, decode_Morphir_IR_Name_Name),
+}
+
+function decodeMorphir_IR_Path_Path(varDecoders: Array<any>,
+                                    input: any): {
+    return decodeMorphir_IR_Name_Name(input);
+}
+
 const decode_Morphir_IR_Module_ModuleName = decode_Morphir_IR_Path_Path;
 const decode_Morphir_IR_Package_PackageName = decode_Morphir_IR_Path_Path;
 
-function decode_Morphir_IR_Module_Specification<TA>(decode_Var_ta: (any) => TA,
-                                                    input: any): object {
+function decode_Morphir_IR_Module_Specification(varDecoders: Array<any>,
+                                                input: any): object {
     return decodeRecord(
         { 'types':
-            decodeDict.bind(null,
+            decodeDict.bind(null, varDecoders,
                 decode_Morphir_IR_Name_Name,
-                decode_Morphir_IR_Documented_Documented.bind(null,
-                    decode_Morphir_IR_Type_Specification.bind(null, decode_Var_ta),
+                decode_Morphir_IR_Documented_Documented.bind(null, varDecoders,
+                    decode_Morphir_IR_Type_Specification.bind(null, varDecoders),
                 ),
             ),
           'values':
-            decodeDict.bind(null,
+            decodeDict.bind(null, varDecoders,
                 decode_Morphir_IR_Name_Name,
-                decode_Morphir_IR_Value_Specification.bind(null, decode_Var_ta),
+                decode_Morphir_IR_Value_Specification.bind(null, varDecoders),
             )
         },
         input
     );
 }
 
-function decode_Morphir_IR_Package_Specification<TA>(decode_Var_ta: (any) => TA,
-                                                     input: any): object {
-    return decodeRecord(
+function decode_Morphir_IR_Package_Specification(varDecoders,
+                                                 input: any): object {
+    return decodeRecord(varDecoders,
         { 'modules':
-            decodeDict.bind(null,
+            decodeDict.bind(null, varDecoders,
                 decode_Morphir_IR_Module_ModuleName,
-                decode_Morphir_IR_Module_Specification.bind(decode_Var_ta)
+                decode_Morphir_IR_Module_Specification.bind(null, { ta: varDecoders['ta'] })
             )
         }
     );
 }
 
-const decode_Morphir_IR_Distribution_Distribution = decodeCustomType_0.bind( null,
-    "library",
-    [
-        decode_Morphir_IR_Package_PackageName,
-        // Dict<Morphir.IR.Package.PackageName,Morphir.IR.Package.Specification<TypeAttribute>>
-        decodeDict.bind(null,
-            decode_Morphir_IR_Package_PackageName,
-            decode_Morphir_IR_Package_Specification.bind(null, decodeUnit)
-        ),
-        decode_Morphir_IR_Package_Definition.bind(null,
-            [
-                decodeUnit,
-                decodeMorphir_IR_Type_Type.bind(null,
-                    decodeUnit
-                )
-            ]
-        )
-    ]
+function decode_Morphir_IR_Package_Definition(varDecoders,
+                                              input: any): object {
+    return decodeRecord(null, varDecoders,
+        decode_Morphir_IR_Module_ModuleName.bind(null, varDecoders,
+        { "modules":
+            decodeDict.bind(null, varDecoders,
+                decode_Morphir_IR_Module_ModuleName,
+                decode_Morphir_IR_AccessControlled_AccessControlled(null,
+                    { a: decode_Morphir_IR_Module_Definition.bind(null,
+                        { ta: varDecoders['ta'], va: varDecoders['va'] })
+                    })
+           )
+        })
+}
+
+function decode_Morphir_IR_Distribution_Distribution(varDecoders, input: any): object {
+    return decodeCustomType(null, {},
+        {
+            kind: "library",
+            arg1: decode_Morphir_IR_Package_PackageName.bind(null, {}),
+            // Dict<Morphir.IR.Package.PackageName,Morphir.IR.Package.Specification<TypeAttribute>>
+            arg2: decodeDict.bind(null, {},
+                decode_Morphir_IR_Package_PackageName.bind(null, {}),
+                decode_Morphir_IR_Package_Specification.bind(null, { ta: decodeUnit })
+            ),
+            arg3: decode_Morphir_IR_Package_Definition.bind(null, { ta: decodeUnit, va: decodeUnit })
+        }
+    );
 }
 
 function morphirIrFromJson(data: object): Morphir.IR.Distribution.Distribution {
@@ -202,7 +220,7 @@ function morphirIrFromJson(data: object): Morphir.IR.Distribution.Distribution {
         throw new Error(`Unsupported format version: ${formatVersion}`);
     }
 
-    return expectDistribution(data['distribution']);
+    return decode_Morphir_IR_Distribution_Distribution(data['distribution']);
 }
 
 fs.readFile(INPUT, 'utf8', (err, data) => {
