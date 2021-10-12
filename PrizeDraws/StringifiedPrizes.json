@@ -1,0 +1,51 @@
+{
+    "mondayFirstPrize": [
+        "MainPrize",
+        {
+            "location": "Blackpool",
+            "duration": 2,
+            "allExpenses": false
+        }
+    ],
+    "mondayBestDressed": [
+        "Award",
+        "Best Dressed",
+        100
+    ],
+    "mondayWorstDressed": [
+        "Award",
+        "Worst Dressed",
+        10
+    ],
+    "wednesdayFirstPrize": [
+        "MainPrize",
+        "Diamond"
+    ],
+    "wednesdaySecondPrize": [
+        "MainPrize",
+        "Ruby"
+    ],
+    "wednesdayFunniestHat": [
+        "Award",
+        "Funniest Hat",
+        25
+    ],
+    "fridayFirstPrize": [
+        "MainPrize",
+        [
+            "Car",
+            1964,
+            "AstonMartin",
+            "DB5"
+        ]
+    ],
+    "fridayKindestPerson": [
+        "Award",
+        "Kindest Person",
+        {
+            "location": "Gran Canaria",
+            "duration": 5,
+            "allExpenses": true
+        }
+    ]
+}

@@ -1,0 +1,7 @@
+{
+    "name": "Codethink",
+    "sourceDirectory": "src",
+    "exposedModules": [
+        "PrizeDraws.AutoGen"
+    ]
+}
