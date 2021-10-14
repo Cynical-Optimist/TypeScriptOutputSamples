@@ -18,8 +18,8 @@ let downConstructor: [Morphir.IR.Name.Name, Array<[Morphir.IR.Name.Name, Morphir
 ]
 
 let directionAccessControlled: Morphir.IR.AccessControlled.AccessControlled<Morphir.IR.Type.Constructors<[]>> = {
-    Access: accessPublic,
-    Value: [upConstructor, downConstructor]
+    access: accessPublic,
+    value: [upConstructor, downConstructor]
 }
 
 let directionDefinition: Morphir.IR.Type.Definition<[]> = {
@@ -65,18 +65,18 @@ let floatReference: Morphir.IR.Type.Type<[]> = {
 }
 
 let directionField: Morphir.IR.Type.Field<[]> = {
-    Name: ["direction"],
-    Tpe: directionReference
+    name: ["direction"],
+    tpe: directionReference
 }
 
 let codeField: Morphir.IR.Type.Field<[]> = {
-    Name: ["code"],
-    Tpe: stringReference
+    name: ["code"],
+    tpe: stringReference
 }
 
 let velocityField: Morphir.IR.Type.Field<[]> = {
-    Name: ["velocity"],
-    Tpe: floatReference
+    name: ["velocity"],
+    tpe: floatReference
 }
 
 let trackingAdvantageType: Morphir.IR.Type.Type<[]> = {
@@ -93,33 +93,33 @@ let trackingAdvantageDefinition: Morphir.IR.Type.Definition<[]> = {
 
 // ------------------ Module
 
-let directionAccessControlledDocumented: Morphir.IR.AccessControlled.AccessControlled<{ Doc: string, Value: Morphir.IR.Type.Definition<[]> }> = {
-    Access: accessPublic,
-    Value: { Doc: "", Value: directionDefinition }
+let directionAccessControlledDocumented: Morphir.IR.AccessControlled.AccessControlled<{ doc: string, value: Morphir.IR.Type.Definition<[]> }> = {
+    access: accessPublic,
+    value: { doc: "", value: directionDefinition }
 }
 
-let trackingAdvantageAccessControlledDocumented: Morphir.IR.AccessControlled.AccessControlled<{ Doc: string, Value: Morphir.IR.Type.Definition<[]> }> = {
-    Access: accessPublic,
-    Value: { Doc: "", Value: trackingAdvantageDefinition }
+let trackingAdvantageAccessControlledDocumented: Morphir.IR.AccessControlled.AccessControlled<{ doc: string, value: Morphir.IR.Type.Definition<[]> }> = {
+    access: accessPublic,
+    value: { doc: "", value: trackingAdvantageDefinition }
 }
 
 let useCaseOneDefinition: Morphir.IR.Module.Definition<[], Morphir.IR.Type.Type<[]>> = {
-    Types: [
+    types: [
         [["direction"], directionAccessControlledDocumented],
         [["tracking", "advantage"], trackingAdvantageAccessControlledDocumented]
     ],
-    Values: [],
+    values: [],
 }
 
 let useCaseOneAccessControlledDefinition: Morphir.IR.AccessControlled.AccessControlled<Morphir.IR.Module.Definition<[], Morphir.IR.Type.Type<[]>>> = {
-    Access: accessPublic,
-    Value: useCaseOneDefinition
+    access: accessPublic,
+    value: useCaseOneDefinition
 }
 
 // ------------------ Distribution
 
 let packageDefinition: Morphir.IR.Package.Definition<[], Morphir.IR.Type.Type<[]>> = {
-    Modules: [
+    modules: [
         [
             [["insight"], ["use", "case", "1"]], useCaseOneAccessControlledDefinition
         ]
